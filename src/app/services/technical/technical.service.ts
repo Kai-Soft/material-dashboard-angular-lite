@@ -1,30 +1,32 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-
 import { map, catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import Swal from 'sweetalert2';
 
-
 import { URL_SERVICES } from '../../config/config';
-import { Customer } from '../../models/customer.model';
-import { BussinessPartner } from '../../models/bussiness-partner.model';
+import { Technical } from '../../models/technical.model';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
-export class CustomerService {
-  constructor(public http: HttpClient) {}
+export class TechnicalService {
 
-  cargarClientes() {
-    const url = URL_SERVICES + '/customers';
+  constructor(
+    public http: HttpClient
+  ) { }
+
+  cargarTecnicos() {
+
+    const url = URL_SERVICES + '/technicians';
 
     return this.http.get(url);
+
   }
 
-  obtenerCliente( customer: Customer ) {
+  obtenerTecnico( technical: Technical ) {
 
-    const url = URL_SERVICES + '/customers/' + customer.id;
+    const url = URL_SERVICES + '/technicians/' + technical.id;
 
     return this.http.get(url)
                     .pipe(
@@ -32,15 +34,14 @@ export class CustomerService {
                         return resp;
                       })
                     );
+
   }
 
-  crearCliente( customer: Customer ) {
+  crearTecnico( technical: Technical ) {
 
-    console.log(customer);
+    const url = URL_SERVICES + '/technicians';
 
-    const url = URL_SERVICES + '/customers';
-
-    return this.http.post(url, customer)
+    return this.http.post(url, technical)
                     .pipe(
                       map((resp: any) => {
                       return resp;
@@ -59,9 +60,32 @@ export class CustomerService {
 
   }
 
-  borrarCliente( customer: Customer ) {
+  actualizarTecnico( technical: Technical ) {
 
-    const url = URL_SERVICES + '/customers/' + customer.id;
+    const url = URL_SERVICES + '/technicians/' + technical.id;
+
+    return this.http.put(url, technical)
+                    .pipe(
+                      map((resp: any) => {
+                      return resp;
+                      }),
+                      catchError( err => {
+
+                        Swal.fire({
+                          icon: 'error',
+                          title: 'Error',
+                          text: 'Error al actualizar el recurso'
+                        });
+
+                        return throwError(err);
+                      })
+                    );
+
+  }
+
+  borrarTecnico( technical: Technical ) {
+
+    const url = URL_SERVICES + '/technicians/' + technical.id;
 
     return this.http.delete(url)
                     .pipe(
@@ -74,28 +98,6 @@ export class CustomerService {
                           icon: 'error',
                           title: 'Error',
                           text: 'Error al eliminar el recurso'
-                        });
-
-                        return throwError(err);
-                      })
-                    );
-  }
-
-  actualizarCliente( customer: Customer ) {
-
-    const url = URL_SERVICES + '/customers/' + customer.id;
-
-    return this.http.put(url, customer)
-                    .pipe(
-                      map((resp: any) => {
-                      return resp;
-                      }),
-                      catchError( err => {
-
-                        Swal.fire({
-                          icon: 'error',
-                          title: 'Error',
-                          text: 'Error al actualizar el recurso'
                         });
 
                         return throwError(err);

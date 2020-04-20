@@ -1,0 +1,246 @@
+<div class="row animated fadeIn" *ngIf="cargando">
+    <div class="col-sm-12">
+        <div class="alert alert-info text-center">
+            <strong> Cargando </strong>
+            <br><br>
+            <!-- <div class="spinner-border text-light" role="status">
+                <span class="sr-only">Loading...</span>
+            </div> -->
+            <div class="spinner-grow text-light" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <div class="spinner-grow text-light" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <div class="spinner-grow text-light" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <br><br>
+            <strong> Espere por favor</strong>
+        </div>
+    </div>
+</div>
+
+<div class="row animated fadeIn" *ngIf="!cargando">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header card-header-info">
+                <h4 class="card-title">Ordenes de Servicio
+                    <span class="pull-right">
+                        <button (click)="showModalCreate()" class="btn btn-rounded btn-success">
+                            <i class="fa fa-plus"></i> Crear
+                        </button>
+                    </span>
+                </h4>
+                <p class="card-category"> Ordenes de servicio activas en el sistema</p>
+
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <th> Fecha creación </th>
+                            <th> Fecha ejecución </th>
+                            <th> Días de servicio </th>
+                            <th> Cliente </th>
+                            <th> Técnico </th>
+                            <th> Estado </th>
+                            <th width="150px"> Acciones </th>
+                        </thead>
+                        <tbody class="text-dark">
+                            <tr *ngFor="let order of orders">
+                                <td> {{ order.creationDate }} </td>
+                                <td> {{ order.executionDate }} </td>
+                                <td> {{ order.dayOfService }} </td>
+                                <td> {{ order.customer.customerIdCompany }} - {{ order.customer.bussinessPartner.firstName + ' ' + order.customer.bussinessPartner.lastName }} </td>
+                                <td> {{ order.technical.technicalIdCompany }} - {{ order.technical.bussinessPartner.firstName + ' ' + order.technical.bussinessPartner.lastName }} </td>
+                                <td>
+                                    <h4> <span *ngIf="order.status == 'ACTIVE'" class=" badge badge-pill badge-success">Activo</span> </h4>
+                                    <h4> <span *ngIf="order.status == 'INACTIVE'" class=" badge badge-pill badge-danger">Inactivo</span> </h4>
+                                </td>
+                                <td>
+                                    <button (click)="showModalUpdate(order)" mat-raised-button type="button" matTooltip="Editar" [matTooltipPosition]=" 'above'" class="btn btn-primary btn-link btn-sm btn-just-icon" [ngClass]="{'disabled': order.status === 'INACTIVE'}">
+                                        <i class="fa fa-pencil-square-o"></i>
+                                    </button>
+                                    <button (click)="borrarOrden(order)" mat-raised-button type="button" matTooltip="Eliminar" [matTooltipPosition]=" 'above'" class="btn btn-danger btn-link btn-sm btn-just-icon" [ngClass]="{'disabled': order.status === 'INACTIVE'}">
+                                        <i class="fa fa-trash-o"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Modal Create Order -->
+<div class="fondo-negro animated fadeIn" [ngClass]="modalCreate">
+    <div class="modal" style="display: block;" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><b> <i class="fa fa-plus"> </i> Crear orden de servicio</b></h5>
+                    <button (click)="hideModalCreate()" type="button" class="close" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <form ngNativeValidate #fOrder="ngForm" (ngSubmit)="crearOrden(fOrder.value)" class="form-horizontal" autocomplete="off">
+
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="bmd-label-floating"> Fecha creación *</label>
+                            <div class="col-md-12">
+                                <input [ngModel]="order.creationDate" name="creationDate" type="date" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="bmd-label-floating"> Fecha ejecución *</label>
+                            <div class="col-md-12">
+                                <input [ngModel]="order.executionDate" name="executionDate" type="date" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="bmd-label-floating"> Días de servicio *</label>
+                            <div class="col-md-12">
+                                <input [ngModel]="order.dayOfService" name="dayOfService" type="number" class="form-control form-control-line" placeholder="Ej: 5..." required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="bmd-label-floating"> Cliente: *</label>
+                            <div class="col-md-12">
+                                <select [(ngModel)]="order.customer" name="customer" class="form-control" required>
+                                    <option *ngFor="let customer of customers" [(value)]="customer.id">
+                                        {{ customer.customerIdCompany }} - {{ customer.bussinessPartner.firstName + customer.bussinessPartner.lastName }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="bmd-label-floating"> Técnico: *</label>
+                            <div class="col-md-12">
+                                <select [(ngModel)]="order.technical" name="technical" class="form-control" required>
+                                    <option *ngFor="let technical of technicians" [(value)]="technical.id">
+                                        {{ technical.technicalIdCompany }} - {{ technical.bussinessPartner.firstName + technical.bussinessPartner.lastName }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="bmd-label-floating"> Problema reportado</label>
+                            <div class="col-md-12">
+                                <textarea [ngModel]="order.theoryDescription" name="theoryDescription" class="form-control form-control-line"> </textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">
+                            <span class="btn-label">
+                                <i class="material-icons">check</i>
+                            </span>
+                            Guardar
+                        </button>
+                        <button (click)="hideModalCreate()" type="button" class="btn">
+                            <span class="btn-label">
+                                <i class="material-icons">close</i>
+                            </span>
+                            Cerrar
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Modal Update Order -->
+<div class="fondo-negro animated fadeIn" [ngClass]="modalUpdate">
+    <div class="modal" style="display: block;" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><b> <i class="fa fa-edit"> </i> Actualizar orden de servicio</b></h5>
+                    <button (click)="hideModalUpdate()" type="button" class="close" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <form ngNativeValidate #fOrderUpd="ngForm" (ngSubmit)="actualizarOrden(fOrderUpd.value)" class="form-horizontal" autocomplete="off">
+
+                    <div class="modal-body modal-body-scroll">
+
+                        <input [ngModel]="order.id" name="id" type="hidden">
+
+                        <div class="form-group">
+                            <label class="bmd-label-floating"> Fecha creación *</label>
+                            <div class="col-md-12">
+                                <input [ngModel]="order.creationDate" name="creationDate" type="date" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="bmd-label-floating"> Fecha ejecución *</label>
+                            <div class="col-md-12">
+                                <input [ngModel]="order.executionDate" name="executionDate" type="date" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="bmd-label-floating"> Días de servicio *</label>
+                            <div class="col-md-12">
+                                <input [ngModel]="order.dayOfService" name="dayOfService" type="number" class="form-control form-control-line" placeholder="Ej: 5..." required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="bmd-label-floating"> Cliente: *</label>
+                            <div class="col-md-12">
+                                <select [(ngModel)]="order.customer" name="customer" class="form-control" required>
+                                    <option *ngFor="let customer of customers" [(value)]="customer.id">
+                                        {{ customer.customerIdCompany }} - {{ customer.bussinessPartner.firstName + customer.bussinessPartner.lastName }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="bmd-label-floating"> Técnico: *</label>
+                            <div class="col-md-12">
+                                <select [(ngModel)]="order.technical" name="technical" class="form-control" required>
+                                    <option *ngFor="let technical of technicians" [(value)]="technical.id">
+                                        {{ technical.technicalIdCompany }} - {{ technical.bussinessPartner.firstName + technical.bussinessPartner.lastName }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="bmd-label-floating"> Problema reportado</label>
+                            <div class="col-md-12">
+                                <textarea [ngModel]="order.theoryDescription" name="theoryDescription" class="form-control form-control-line"> </textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">
+                            <span class="btn-label">
+                                <i class="material-icons">check</i>
+                            </span>
+                            Guardar
+                        </button>
+                        <button (click)="hideModalUpdate()" type="button" class="btn">
+                            <span class="btn-label">
+                                <i class="material-icons">close</i>
+                            </span>
+                            Cerrar
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>

@@ -3,7 +3,10 @@ import { Routes } from '@angular/router';
 // Components
 import { UserProfileComponent } from '../../pages/user-profile/user-profile.component';
 import { DashboardComponent } from '../../pages/dashboard/dashboard.component';
+import { BussinessPartnerComponent } from '../../pages/bussiness-partner/bussiness-partner.component';
 import { CustomerComponent } from '../../pages/customer/customer.component';
+import { TechnicalComponent } from '../../pages/technical/technical.component';
+import { OrderComponent } from '../../pages/order/order.component';
 
 export const AdminLayoutRoutes: Routes = [
     // {
@@ -51,5 +54,8 @@ export const AdminLayoutRoutes: Routes = [
 
     { path: 'dashboard', component: DashboardComponent },
     { path: 'user-profile',   component: UserProfileComponent },
-    { path: 'customers', component: CustomerComponent }
+    { path: 'bussiness-partners', component: BussinessPartnerComponent },
+    { path: 'customers', component: CustomerComponent },
+    { path: 'technicians', component: TechnicalComponent },
+    { path: 'orders', component: OrderComponent }
 ];

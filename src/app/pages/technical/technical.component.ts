@@ -1,77 +1,69 @@
 import { Component, OnInit } from '@angular/core';
 
 // Models
-import { Customer } from '../../models/customer.model';
+import { Technical } from '../../models/technical.model';
 
 // Services
-import { CustomerService } from '../../services/customer/customer.service';
+import { TechnicalService } from '../../services/technical/technical.service';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-customer',
-  templateUrl: './customer.component.html',
-  styleUrls: ['./customer.component.css'],
+  selector: 'app-technical',
+  templateUrl: './technical.component.html',
+  styleUrls: ['./technical.component.css']
 })
-export class CustomerComponent implements OnInit {
+export class TechnicalComponent implements OnInit {
 
-  customers: Customer[] = [];
-  customer: Customer = new Customer('', null);
+  technicians: Technical[] = [];
+  technical: Technical = new Technical('', null);
 
   modalUpdate = 'ocultar';
   cargando = true;
 
   constructor(
-    public _customerService: CustomerService
-  ) {}
+    public _technicalService: TechnicalService
+  ) { }
 
   ngOnInit() {
-    this.cargarClientes();
+    this.cargarTecnicos();
   }
 
   hideModalUpdate() {
     this.modalUpdate = 'ocultar';
-    this.cargarClientes();
+    this.cargarTecnicos();
   }
 
-  showModalUpdate( customer: Customer ) {
-    this.customer = customer;
+  showModalUpdate(technical: Technical) {
+    this.technical = technical;
     this.modalUpdate = '';
   }
 
-  cargarClientes() {
+  cargarTecnicos() {
 
     this.cargando = true;
 
-    this._customerService.cargarClientes()
-                        .subscribe((resp: any) => {
-                          this.customers = resp.customers;
-                          this.cargando = false;
-                        });
-  }
-
-  obtenerCliente( customer: Customer ) {
-
-    this._customerService.obtenerCliente(customer)
+    this._technicalService.cargarTecnicos()
                           .subscribe((resp: any) => {
-                            this.customer = resp.customer;
+                            this.technicians = resp.technicians;
+                            this.cargando = false;
                           });
   }
 
-  actualizarCliente( customer: Customer ) {
+  actualizarTecnico( technical: Technical ) {
 
-    this._customerService.actualizarCliente(customer)
-                          .subscribe( resp => {
+    this._technicalService.actualizarTecnico(technical)
+                        .subscribe( resp => {
                             Swal.fire({
                               icon: 'success',
-                              title: 'Cliente actualizado exitosamente',
-                              text: 'Customer Id: ' + customer.customerIdCompany
+                              title: 'Técnico actualizado exitosamente',
+                              text: 'Técnico Id: ' + technical.technicalIdCompany
                             });
-                            this.cargarClientes()
+                            this.cargarTecnicos()
                             this.hideModalUpdate();
                           });
   }
 
-  borrarCliente( customer: Customer ) {
+  borrarTecnico( technical: Technical ) {
 
     const swalWithBootstrapButtons = Swal.mixin({
       customClass: {
@@ -92,14 +84,14 @@ export class CustomerComponent implements OnInit {
     }).then((result) => {
       if (result.value) {
 
-        this._customerService.borrarCliente(customer)
+        this._technicalService.borrarTecnico(technical)
                               .subscribe(borrado => {
-                                this.cargarClientes();
+                                this.cargarTecnicos();
                               });
 
         swalWithBootstrapButtons.fire(
           'Eliminado!',
-          'El cliente ha sido eliminado',
+          'El técnico ha sido eliminado',
           'success'
         )
       } else if (
@@ -115,5 +107,6 @@ export class CustomerComponent implements OnInit {
     });
 
   }
+
 
 }

@@ -10,10 +10,15 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSelectModule } from '@angular/material/select';
 
+import { ServicesModule } from '../../services/services.module';
+
 // Pages
 import { UserProfileComponent } from '../../pages/user-profile/user-profile.component';
 import { DashboardComponent } from '../../pages/dashboard/dashboard.component';
+import { BussinessPartnerComponent } from '../../pages/bussiness-partner/bussiness-partner.component';
 import { CustomerComponent } from '../../pages/customer/customer.component';
+import { TechnicalComponent } from '../../pages/technical/technical.component';
+import { OrderComponent } from '../../pages/order/order.component';
 
 @NgModule({
   imports: [
@@ -27,11 +32,15 @@ import { CustomerComponent } from '../../pages/customer/customer.component';
     MatInputModule,
     MatSelectModule,
     MatTooltipModule,
+    ServicesModule
   ],
   declarations: [
     UserProfileComponent,
     DashboardComponent,
-    CustomerComponent
+    BussinessPartnerComponent,
+    CustomerComponent,
+    TechnicalComponent,
+    OrderComponent
   ]
 })
 

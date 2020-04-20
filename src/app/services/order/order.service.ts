@@ -1,30 +1,32 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-
 import { map, catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import Swal from 'sweetalert2';
 
-
 import { URL_SERVICES } from '../../config/config';
-import { Customer } from '../../models/customer.model';
-import { BussinessPartner } from '../../models/bussiness-partner.model';
+import { Order } from '../../models/order.model';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
-export class CustomerService {
-  constructor(public http: HttpClient) {}
+export class OrderService {
 
-  cargarClientes() {
-    const url = URL_SERVICES + '/customers';
+  constructor(
+    public http: HttpClient
+  ) { }
+
+  cargarOrdenes() {
+
+    const url = URL_SERVICES + '/orders';
 
     return this.http.get(url);
+
   }
 
-  obtenerCliente( customer: Customer ) {
+  obtenerOrden( order: Order ) {
 
-    const url = URL_SERVICES + '/customers/' + customer.id;
+    const url = URL_SERVICES + '/orders/' + order.id;
 
     return this.http.get(url)
                     .pipe(
@@ -34,16 +36,17 @@ export class CustomerService {
                     );
   }
 
-  crearCliente( customer: Customer ) {
+  crearOrden( order: Order ) {
 
-    console.log(customer);
+    const url = URL_SERVICES + '/orders';
 
-    const url = URL_SERVICES + '/customers';
+    // TODO: agregar funcionalidad de usuarios, por el momento seteamos un usuario activo
+    order.user = '17fd033d-2742-4b28-ac84-b361882ee456';
 
-    return this.http.post(url, customer)
+    return this.http.post(url, order)
                     .pipe(
                       map((resp: any) => {
-                      return resp;
+                        return resp;
                       }),
                       catchError( err => {
 
@@ -56,39 +59,16 @@ export class CustomerService {
                         return throwError(err);
                       })
                     );
-
   }
 
-  borrarCliente( customer: Customer ) {
+  actualizarOrden( order: Order ) {
 
-    const url = URL_SERVICES + '/customers/' + customer.id;
+    const url = URL_SERVICES + '/orders/' + order.id;
 
-    return this.http.delete(url)
+    return this.http.put(url, order)
                     .pipe(
                       map((resp: any) => {
-                      return resp;
-                      }),
-                      catchError( err => {
-
-                        Swal.fire({
-                          icon: 'error',
-                          title: 'Error',
-                          text: 'Error al eliminar el recurso'
-                        });
-
-                        return throwError(err);
-                      })
-                    );
-  }
-
-  actualizarCliente( customer: Customer ) {
-
-    const url = URL_SERVICES + '/customers/' + customer.id;
-
-    return this.http.put(url, customer)
-                    .pipe(
-                      map((resp: any) => {
-                      return resp;
+                        return resp;
                       }),
                       catchError( err => {
 
@@ -96,6 +76,28 @@ export class CustomerService {
                           icon: 'error',
                           title: 'Error',
                           text: 'Error al actualizar el recurso'
+                        });
+
+                        return throwError(err);
+                      })
+                    );
+  }
+
+  borrarOrden( order: Order ) {
+
+    const url = URL_SERVICES + '/orders/' + order.id;
+
+    return this.http.delete(url)
+                    .pipe(
+                      map((resp: any) => {
+                        return resp;
+                      }),
+                      catchError( err => {
+
+                        Swal.fire({
+                          icon: 'error',
+                          title: 'Error',
+                          text: 'Error al eliminar el recurso'
                         });
 
                         return throwError(err);

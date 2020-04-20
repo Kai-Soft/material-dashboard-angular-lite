@@ -1,0 +1,337 @@
+<div class="row animated fadeIn" *ngIf="cargando">
+    <div class="col-sm-12">
+        <div class="alert alert-info text-center">
+            <strong> Cargando </strong>
+            <br><br>
+            <!-- <div class="spinner-border text-light" role="status">
+                <span class="sr-only">Loading...</span>
+            </div> -->
+            <div class="spinner-grow text-light" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <div class="spinner-grow text-light" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <div class="spinner-grow text-light" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <br><br>
+            <strong> Espere por favor</strong>
+        </div>
+    </div>
+</div>
+
+<div class="row animated fadeIn" *ngIf="!cargando">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header card-header-info">
+                <h4 class="card-title">Socios Comerciales
+                    <span class="pull-right">
+                        <button (click)="showModalCreate()" class="btn btn-rounded btn-success">
+                            <i class="fa fa-plus"></i> Crear
+                        </button>
+                    </span>
+                </h4>
+                <p class="card-category"> Socios Comerciales activos del sistema</p>
+
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <th> NIT </th>
+                            <th> Nombre Completo </th>
+                            <th> Telefono </th>
+                            <th> Rol Comercial </th>
+                            <th> Estado </th>
+                            <th width="150px"> Acciones </th>
+                        </thead>
+                        <tbody class="text-dark">
+                            <tr *ngFor="let bp of bps">
+                                <td> {{ bp.nit }} </td>
+                                <td> {{ bp.firstName + ' ' + bp.lastName }} </td>
+                                <td> {{ bp.telephone }} </td>
+                                <td>
+                                    <h4>
+                                        <span *ngIf="bp.customer" class=" badge badge-pill badge-secondary">Cliente</span>
+                                        <span *ngIf="bp.technical" class=" badge badge-pill badge-dark">Técnico</span>
+                                    </h4>
+                                </td>
+                                <td>
+                                    <h4> <span *ngIf="bp.status == 'ACTIVE'" class=" badge badge-pill badge-success">Activo</span> </h4>
+                                    <h4> <span *ngIf="bp.status == 'INACTIVE'" class=" badge badge-pill badge-danger">Inactivo</span> </h4>
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button type="button" mat-raised-button type="button" matTooltip="Asignar role" [matTooltipPosition]=" 'above'" class="btn btn-info btn-link btn-sm btn-just-icon dropdown-toggle" [ngClass]="{'disabled': (bp.status === 'INACTIVE') || (!(bp.customer === null) && !(bp.technical === null))}"
+                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fa fa-info-circle"> </i>
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <a *ngIf="!bp.customer" (click)="showModalCreateCustomer(bp)" class="dropdown-item pointer"> <i class="material-icons">work</i> Cliente</a>
+                                            <a *ngIf="!bp.technical" (click)="showModalCreateTechnical(bp)" class="dropdown-item pointer"> <i class="material-icons">contact_phone</i> Técnico</a>
+                                        </div>
+                                    </div>
+                                    <button (click)="showModalUpdate(bp)" mat-raised-button type="button" matTooltip="Editar" [matTooltipPosition]=" 'above'" class="btn btn-primary btn-link btn-sm btn-just-icon" [ngClass]="{'disabled': bp.status === 'INACTIVE'}">
+                                        <i class="fa fa-pencil-square-o"></i>
+                                    </button>
+                                    <button (click)="borrarSocioComercial(bp)" mat-raised-button type="button" matTooltip="Eliminar" [matTooltipPosition]=" 'above'" class="btn btn-danger btn-link btn-sm btn-just-icon" [ngClass]="{'disabled': bp.status === 'INACTIVE'}">
+                                        <i class="fa fa-trash-o"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card-footer pull-right">
+                <div class="form-check">
+                    <label class="form-check-label">
+                        <input (change)="cargarInactives($event)" class="form-check-input" type="checkbox" [ngModel]="all" value="all"> Visualizar recursos inactivos
+                        <span class="form-check-sign">
+                            <span class="check"></span>
+                        </span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Create Bussiness Partner -->
+<div class="fondo-negro animated fadeIn" [ngClass]="modalCreate">
+    <div class="modal" style="display: block;" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><b> <i class="fa fa-plus"> </i> Crear Socio Comercial</b></h5>
+                    <button (click)="hideModalCreate()" type="button" class="close" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <form ngNativeValidate #fBussinessPartner="ngForm" (ngSubmit)="crearSocioComercial(fBussinessPartner.value)" class="form-horizontal" autocomplete="off">
+
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="exampleEmail" class="bmd-label-floating"> NIT *</label>
+                            <div class="col-md-12">
+                                <input [ngModel]="bp.nit" name="nit" type="text" class="form-control" placeholder="Ej: 8002218-9..." required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleEmail" class="bmd-label-floating"> Nombres *</label>
+                            <div class="col-md-12">
+                                <input [ngModel]="bp.firstName" name="firstName" type="text" class="form-control form-control-line" placeholder="Ej: Thomas..." required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleEmail" class="bmd-label-floating"> Apellidos *</label>
+                            <div class="col-md-12">
+                                <input [ngModel]="bp.lastName" name="lastName" type="text" class="form-control form-control-line" placeholder="Ej: Jimenez C...." required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleEmail" class="bmd-label-floating"> Dirección</label>
+                            <div class="col-md-12">
+                                <input [ngModel]="bp.direction" name="direction" type="text" class="form-control form-control-line" placeholder="Ej: Ciudad de Guatemala ...">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleEmail" class="bmd-label-floating"> Telefono</label>
+                            <div class="col-md-12">
+                                <input [ngModel]="bp.telephone" name="telephone" type="number" class="form-control form-control-line" placeholder="Ej: 79489649">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">
+                            <span class="btn-label">
+                                <i class="material-icons">check</i>
+                            </span>
+                            Guardar
+                        </button>
+                        <button (click)="hideModalCreate()" type="button" class="btn">
+                            <span class="btn-label">
+                                <i class="material-icons">close</i>
+                            </span>
+                            Cerrar
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Modal Update Bussiness Partner -->
+<div class="fondo-negro animated fadeIn" [ngClass]="modalUpdate">
+    <div class="modal" style="display: block;" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><b> <i class="fa fa-edit"> </i> Modificar Socio Comercial</b></h5>
+                    <button (click)="hideModalUpdate()" type="button" class="close" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <form ngNativeValidate #fBussinessPartnerUpd="ngForm" (ngSubmit)="actualizarSocioComercial(fBussinessPartnerUpd.value)" class="form-horizontal" autocomplete="off">
+
+                    <div class="modal-body">
+
+                        <input [ngModel]="bp.id" name="id" type="hidden">
+
+                        <div class="form-group">
+                            <label class="bmd-label-floating"> NIT *</label>
+                            <div class="col-md-12">
+                                <input [ngModel]="bp.nit" name="nit" type="text" class="form-control" placeholder="Ej: 8002218-9..." required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="bmd-label-floating"> Nombres *</label>
+                            <div class="col-md-12">
+                                <input [ngModel]="bp.firstName" name="firstName" type="text" class="form-control form-control-line" placeholder="Ej: Thomas..." required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="bmd-label-floating"> Apellidos *</label>
+                            <div class="col-md-12">
+                                <input [ngModel]="bp.lastName" name="lastName" type="text" class="form-control form-control-line" placeholder="Ej: Jimenez C...." required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="bmd-label-floating"> Dirección *</label>
+                            <div class="col-md-12">
+                                <input [ngModel]="bp.direction" name="direction" type="text" class="form-control form-control-line" placeholder="Ej: Ciudad de Guatemala ..." required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="bmd-label-floating"> Telefono *</label>
+                            <div class="col-md-12">
+                                <input [ngModel]="bp.telephone" name="telephone" type="number" class="form-control form-control-line" placeholder="Ej: 79489649" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">
+                            <span class="btn-label">
+                                <i class="material-icons">check</i>
+                            </span>
+                            Guardar
+                        </button>
+                        <button (click)="hideModalUpdate()" type="button" class="btn">
+                            <span class="btn-label">
+                                <i class="material-icons">close</i>
+                            </span>
+                            Cerrar
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Modal Create Customer -->
+<div class="fondo-negro animated fadeIn" [ngClass]="modalCreateCustomer">
+    <div class="modal" style="display: block;" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><b> <i class="fa fa-edit"> </i> Asginar Datos de Cliente</b></h5>
+                    <button (click)="hideModalCreateCustomer()" type="button" class="close" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <form ngNativeValidate #fCustomer="ngForm" (ngSubmit)="crearCliente(fCustomer.value)" class="form-horizontal" autocomplete="off">
+
+                    <div class="modal-body">
+
+                        <input [ngModel]="customer.bussinessPartner" name="bussinessPartner" type="hidden">
+
+                        <div class="form-group">
+                            <label class="bmd-label-floating"> Codigo Cliente Interno *</label>
+                            <div class="col-md-12">
+                                <input [ngModel]="customer.customerIdCompany" name="customerIdCompany" type="text" class="form-control" placeholder="Ej: 4528..." required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">
+                            <span class="btn-label">
+                                <i class="material-icons">check</i>
+                            </span>
+                            Guardar
+                        </button>
+                        <button (click)="hideModalCreateCustomer()" type="button" class="btn">
+                            <span class="btn-label">
+                                <i class="material-icons">close</i>
+                            </span>
+                            Cerrar
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Modal Create Technical -->
+<div class="fondo-negro animated fadeIn" [ngClass]="modalCreateTechnical">
+    <div class="modal" style="display: block;" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><b> <i class="fa fa-edit"> </i> Asginar Datos de Técnico</b></h5>
+                    <button (click)="hideModalCreateTechnical()" type="button" class="close" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <form ngNativeValidate #fTechnical="ngForm" (ngSubmit)="crearTecnico(fTechnical.value)" class="form-horizontal" autocomplete="off">
+
+                    <div class="modal-body">
+
+                        <input [ngModel]="technical.bussinessPartner" name="bussinessPartner" type="hidden">
+
+                        <div class="form-group">
+                            <label class="bmd-label-floating"> Codigo Técnico Interno *</label>
+                            <div class="col-md-12">
+                                <input [ngModel]="technical.technicalIdCompany" name="technicalIdCompany" type="text" class="form-control" placeholder="Ej: 4528..." required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">
+                            <span class="btn-label">
+                                <i class="material-icons">check</i>
+                            </span>
+                            Guardar
+                        </button>
+                        <button (click)="hideModalCreateTechnical()" type="button" class="btn">
+                            <span class="btn-label">
+                                <i class="material-icons">close</i>
+                            </span>
+                            Cerrar
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>

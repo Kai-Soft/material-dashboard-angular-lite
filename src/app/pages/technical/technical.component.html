@@ -25,9 +25,9 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-header card-header-info">
-                <h4 class="card-title ">Clientes
+                <h4 class="card-title ">Técnicos
                 </h4>
-                <p class="card-category"> Clientes activos del sistema</p>
+                <p class="card-category"> Técnicos activos del sistema</p>
 
             </div>
             <div class="card-body">
@@ -42,20 +42,21 @@
                             <th width="150px"> Acciones </th>
                         </thead>
                         <tbody class="text-dark">
-                            <tr *ngFor="let customer of customers">
-                                <td> {{ customer.customerIdCompany }} </td>
-                                <td> {{ customer.bussinessPartner.nit }} </td>
-                                <td> {{ customer.bussinessPartner.firstName + ' ' + customer.bussinessPartner.lastName }} </td>
-                                <td> {{ customer.bussinessPartner.telephone }} </td>
+                            <tr *ngFor="let technical of technicians">
+                                <td> {{ technical.technicalIdCompany }} </td>
+                                <td> {{ technical.bussinessPartner.nit }} </td>
+                                <td> {{ technical.bussinessPartner.firstName + ' ' + technical.bussinessPartner.lastName }}
+                                </td>
+                                <td> {{ technical.bussinessPartner.telephone }} </td>
                                 <td>
-                                    <h4> <span *ngIf="customer.status == 'ACTIVE'" class=" badge badge-pill badge-success">Activo</span> </h4>
-                                    <h4> <span *ngIf="customer.status == 'INACTIVE'" class=" badge badge-pill badge-danger">Inactivo</span> </h4>
+                                    <h4> <span *ngIf="technical.status == 'ACTIVE'" class=" badge badge-pill badge-success">Activo</span> </h4>
+                                    <h4> <span *ngIf="technical.status == 'INACTIVE'" class=" badge badge-pill badge-danger">Inactivo</span> </h4>
                                 </td>
                                 <td>
-                                    <button (click)="showModalUpdate(customer)" mat-raised-button type="button" matTooltip="Editar" [matTooltipPosition]="'above'" class="btn btn-primary btn-link btn-sm btn-just-icon">
+                                    <button (click)="showModalUpdate(technical)" mat-raised-button type="button" matTooltip="Editar" [matTooltipPosition]="'above'" class="btn btn-primary btn-link btn-sm btn-just-icon">
                                         <i class="fa fa-pencil-square-o"></i>
                                     </button>
-                                    <button (click)="borrarCliente(customer)" mat-raised-button type="button" matTooltip="Eliminar" [matTooltipPosition]="'above'" class="btn btn-danger btn-link btn-sm btn-just-icon">
+                                    <button (click)="borrarTecnico(technical)" mat-raised-button type="button" matTooltip="Eliminar" [matTooltipPosition]="'above'" class="btn btn-danger btn-link btn-sm btn-just-icon">
                                         <i class="fa fa-trash-o"></i>
                                     </button>
                                 </td>
@@ -68,28 +69,28 @@
     </div>
 </div>
 
-<!-- Modal Update Customer -->
+<!-- Modal Update Technical -->
 <div class="fondo-negro animated fadeIn" [ngClass]="modalUpdate">
     <div class="modal" style="display: block;" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title"><b> <i class="fa fa-edit"> </i> Actualizar Datos de Cliente</b></h5>
+                    <h5 class="modal-title"><b> <i class="fa fa-edit"> </i> Actualizar Datos de Técnico</b></h5>
                     <button (click)="hideModalUpdate()" type="button" class="close" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
 
-                <form ngNativeValidate #fCustomer="ngForm" (ngSubmit)="actualizarCliente(fCustomer.value)" class="form-horizontal" autocomplete="off">
+                <form ngNativeValidate #fTechnical="ngForm" (ngSubmit)="actualizarTecnico(fTechnical.value)" class="form-horizontal" autocomplete="off">
 
                     <div class="modal-body">
 
-                        <input [ngModel]="customer.id" name="id" type="hidden">
+                        <input [ngModel]="technical.id" name="id" type="hidden">
 
                         <div class="form-group">
-                            <label class="bmd-label-floating"> Codigo Cliente Interno *</label>
+                            <label class="bmd-label-floating"> Codigo Técnico Interno *</label>
                             <div class="col-md-12">
-                                <input [ngModel]="customer.customerIdCompany" name="customerIdCompany" type="text" class="form-control" placeholder="Ej: 4528..." required>
+                                <input [ngModel]="technical.technicalIdCompany" name="technicalIdCompany" type="text" class="form-control" placeholder="Ej: 4528..." required>
                             </div>
                         </div>
                     </div>
@@ -113,5 +114,4 @@
             </div>
         </div>
     </div>
-
 </div>
