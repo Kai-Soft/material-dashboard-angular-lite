@@ -55,8 +55,11 @@
                                 <td> {{ order.customer.customerIdCompany }} - {{ order.customer.bussinessPartner.firstName + ' ' + order.customer.bussinessPartner.lastName }} </td>
                                 <td> {{ order.technical.technicalIdCompany }} - {{ order.technical.bussinessPartner.firstName + ' ' + order.technical.bussinessPartner.lastName }} </td>
                                 <td>
-                                    <h4> <span *ngIf="order.status == 'ACTIVE'" class=" badge badge-pill badge-success">Activo</span> </h4>
+                                    <h4> <span *ngIf="order.status == 'ACTIVE'" class=" badge badge-pill badge-info">Activo</span> </h4>
+									<h4> <span *ngIf="order.status == 'CONFIRMED'" class=" badge badge-pill badge-primary">Confirmado</span> </h4>
+									<h4> <span *ngIf="order.status == 'APPROVED'" class=" badge badge-pill badge-success">Aprobado</span> </h4>
                                     <h4> <span *ngIf="order.status == 'INACTIVE'" class=" badge badge-pill badge-danger">Inactivo</span> </h4>
+									<h4> <span *ngIf="order.status == 'REJECTED'" class=" badge badge-pill badge-danger">Rechazado</span> </h4>
                                 </td>
                                 <td>
                                     <button (click)="showModalUpdate(order)" mat-raised-button type="button" matTooltip="Editar" [matTooltipPosition]=" 'above'" class="btn btn-primary btn-link btn-sm btn-just-icon" [ngClass]="{'disabled': order.status === 'INACTIVE'}">
